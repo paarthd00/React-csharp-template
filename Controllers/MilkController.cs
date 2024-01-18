@@ -20,7 +20,7 @@ public class MilksController : ControllerBase
     {
         return await _context.Milks.ToListAsync();
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Milk>> GetMilkItem(int id)
     {
@@ -66,8 +66,16 @@ public class MilksController : ControllerBase
             return NotFound();
         }
 
-        _context.Milks.Remove(MilkItem);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.Milks.Remove(MilkItem);
+            await _context.SaveChangesAsync();
+
+        }
+        catch (DbUpdateException)
+        {
+            return BadRequest();
+        }
 
         return NoContent();
     }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-import {getMilks, Milk} from "./network";
+import { getMilks, Milk, deleteMilk } from "./network";
 
 export default function App() {
   const [milks, setMilks] = useState<Milk[]>([]);
@@ -22,7 +21,6 @@ export default function App() {
     }
 
     fetchMilks();
-
   }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -41,16 +39,37 @@ export default function App() {
     } catch (error) {
       alert("Error creating milk");
     }
-  }
+  };
+
+  const handleOnDelete = async (i: number) => {
+    try {
+      await deleteMilk(i);
+      setMilks((milks) => milks.filter((milk) => milk.id !== i));
+    } catch (error) {
+      alert("Error deleting milk");
+      console.log(error);
+    }
+
+    return {};
+  };
 
   return (
     <div className="m-4">
       <h1 className="text-4xl mb-10">Milks</h1>
-      {milks.map((milk) => (
+      {milks.map((milk, i) => (
         <div key={milk.id}>
           <h2 className="text-2xl">{milk.type}</h2>
           <p>Rating: {milk.rating}</p>
           <p>Created At: {milk.createdAt}</p>
+          <button
+            onClick={() => {
+              handleOnDelete(milk.id);
+            }}
+            className=""
+          >
+            Delete
+          </button>
+          <button className=""></button>
         </div>
       ))}
 
