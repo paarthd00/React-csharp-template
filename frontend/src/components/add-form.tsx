@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { MilkContext } from "@/context/milk-context";
+import { ViewContext } from "@/context/view-context";
 export default function AddForm() {
   const [type, setType] = useState("");
   const [rating, setRating] = useState(0);
-  const [_, setMilks] = React.useContext(MilkContext);
-
+  const [, setMilks] = React.useContext(MilkContext);
+  const [, setView] = React.useContext(ViewContext);
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -15,8 +17,8 @@ export default function AddForm() {
         },
         body: JSON.stringify({ type, rating }),
       }).then((response) => response.json());
-
       setMilks((milks) => [...milks, milk]);
+      setView("home");
     } catch (error) {
       alert("Error creating milk");
     }

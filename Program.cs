@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TypesOfMilk.Models;
 using Microsoft.AspNetCore.OpenApi;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = "server=127.0.0.1;user=root;password=root;database=milk_db";
@@ -18,11 +17,8 @@ builder.Services.AddDbContext<DatabaseContext>(
 
 builder.Services.AddControllers();
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// builder done, let's build it 
 
 var app = builder.Build();
 
@@ -32,14 +28,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.MapControllers();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
-
-// Make a page to render data 
-
 
 app.Run();
