@@ -1,23 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import { MilkContext } from "@/context/milk-context";
 import { ViewContext } from "@/context/view-context";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+
+import { formSchema } from "@/lib/validation";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from "react-hook-form";
+import * as z from 'zod';
+import { createMilk } from "@/network";
+
 export default function AddForm() {
-  const [type, setType] = useState("");
-  const [rating, setRating] = useState(0);
   const [, setMilks] = React.useContext(MilkContext);
   const [, setView] = React.useContext(ViewContext);
-  
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      type: "",
+      rating: 0,
+    },
+  })
+
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    const { type, rating } = values;
     try {
-      const milk = await fetch("/api/milks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ type, rating }),
-      }).then((response) => response.json());
-      setMilks((milks) => [...milks, milk]);
+      let resMilk = await createMilk(type, rating);
+      setMilks((milks) => [...milks, resMilk]);
       setView("home");
     } catch (error) {
       alert("Error creating milk");
@@ -25,28 +43,51 @@ export default function AddForm() {
   };
 
   return (
-    <form className="mt-10 flex flex-col" onSubmit={handleSubmit}>
-      <label className="block mb-2">Type</label>
-      <input
-        className="border border-gray-400 rounded px-2 py-1 mb-4"
-        type="text"
-        placeholder="Type"
-        value={type}
-        onChange={(event) => setType(event.target.value)}
-      />
-
-      <label className="block mb-2">Rating</label>
-      <input
-        className="border border-gray-400 rounded px-2 py-1 mb-4"
-        type="number"
-        placeholder="Rating"
-        value={rating}
-        onChange={(event) => setRating(Number(event.target.value))}
-      />
-
-      <button className="bg-blue-500 text-white px-4 py-2 rounded">
-        Create
-      </button>
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Type</FormLabel>
+              <FormControl>
+                <Input placeholder="Milk type" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is the type of milk you are rating
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="rating"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rating</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="Enter rating (0-5)"
+                  {...field}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Parse the input value as a number
+                    field.onChange(value !== '' ? Number(value) : undefined);
+                  }}
+                />
+              </FormControl>
+              <FormDescription>
+                Please enter a number between 0 and 5 for the rating.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   )
 }
