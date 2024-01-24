@@ -1,8 +1,8 @@
 import React from "react";
 import { MilkContext } from "@/context/milk-context";
-import { ViewContext } from "@/context/view-context";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useNavigate } from "@tanstack/react-router";
 import {
   Form,
   FormControl,
@@ -21,8 +21,7 @@ import { createMilk } from "@/network";
 
 export default function AddForm() {
   const [, setMilks] = React.useContext(MilkContext);
-  const [, setView] = React.useContext(ViewContext);
-
+  const Navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,9 +35,11 @@ export default function AddForm() {
     try {
       let resMilk = await createMilk(type, rating);
       setMilks((milks) => [...milks, resMilk]);
-      setView("home");
+
     } catch (error) {
       alert("Error creating milk");
+    } finally {
+      Navigate({ to: "/" })
     }
   };
 
