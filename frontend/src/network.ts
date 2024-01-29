@@ -14,7 +14,13 @@ export async function deleteMilk(id: number) {
   await fetch(`/api/Milks/${id}`, { method: "DELETE" });
 }
 
-export async function createMilk(type: string, rating: number) {
+export async function createMilk({
+  type,
+  rating,
+}: {
+  type: string;
+  rating: number;
+}) {
   const milk = await fetch("/api/milks", {
     method: "POST",
     headers: {

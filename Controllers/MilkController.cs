@@ -7,12 +7,6 @@ namespace TypesOfMilk.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-
-/*
-controllers, react, routing, useQuery, useMutation, zod validation, 
-*/
-
-
 public class MilksController : ControllerBase
 {
     private readonly DatabaseContext _context;
@@ -22,6 +16,7 @@ public class MilksController : ControllerBase
         _context = context;
     }
 
+    // /api/Milks/ByRating?starRating=3
     [HttpGet("ByRating")]
     public async Task<ActionResult<IEnumerable<Milk>>> GetMilkItemsByRating(int starRating)
     {
@@ -34,6 +29,7 @@ public class MilksController : ControllerBase
         return await _context.Milks.ToListAsync();
     }
 
+    // /api/Milks/27
     [HttpGet("{id}")]
     public async Task<ActionResult<Milk>> GetMilkItem(int id)
     {

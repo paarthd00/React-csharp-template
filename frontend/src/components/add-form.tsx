@@ -1,8 +1,8 @@
-import React from "react";
-import { MilkContext } from "@/context/milk-context";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/main";
 import {
   Form,
   FormControl,
@@ -20,8 +20,9 @@ import * as z from 'zod';
 import { createMilk } from "@/network";
 
 export default function AddForm() {
-  const [, setMilks] = React.useContext(MilkContext);
+  
   const Navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,12 +31,15 @@ export default function AddForm() {
     },
   })
 
+  const addMilkMutation = useMutation({
+    mutationFn: createMilk,
+    onSettled: () => queryClient.invalidateQueries({ "queryKey": ["milkData"] })
+  });
+
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     const { type, rating } = values;
     try {
-      let resMilk = await createMilk(type, rating);
-      setMilks((milks) => [...milks, resMilk]);
-
+      addMilkMutation.mutate({type, rating});
     } catch (error) {
       alert("Error creating milk");
     } finally {

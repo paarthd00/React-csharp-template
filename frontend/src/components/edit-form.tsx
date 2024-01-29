@@ -1,6 +1,5 @@
 import React from "react";
 import { MilkContext, SelectedMilkContext } from "@/context/milk-context";
-import { ViewContext } from "@/context/view-context";
 import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input"
 import {
@@ -22,7 +21,6 @@ import { updateMilk } from "@/network";
 export default function EditForm() {
     const [, setMilks] = React.useContext(MilkContext);
     const [selectedMilk, setSelectedMilk] = React.useContext(SelectedMilkContext);
-    const [, setView] = React.useContext(ViewContext);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,7 +44,6 @@ export default function EditForm() {
             await updateMilk(selectedMilk?.id, newMilk);
             setMilks((milks) => milks.map((milk) => (milk.id === selectedMilk?.id ? newMilk : milk)));
             setSelectedMilk(null);
-            setView("home");
         } catch (error) {
             alert("Error editing milk");
             console.log(error);

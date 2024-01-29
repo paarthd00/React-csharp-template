@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using TypesOfMilk.Models;
-using Microsoft.AspNetCore.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
