@@ -47,7 +47,6 @@ export async function updateMilk({
     body: JSON.stringify(newMilk),
   });
 
-  console.log(resp);
   return resp;
 }
 

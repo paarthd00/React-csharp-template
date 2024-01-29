@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
 export const component = function Home() {
-  // Make sure to keep the query and mutation before any return statement lol
+  // Make sure to keep the query and mutation before any return statement 
   let { isPending, error, data } = useQuery({
     queryKey: ['milkData'],
     queryFn: () =>
