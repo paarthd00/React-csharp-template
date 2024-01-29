@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react'
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, Router } from '@tanstack/react-router'
 import './index.css'
@@ -19,7 +19,6 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
-
 // Render the app
 const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {

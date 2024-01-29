@@ -31,12 +31,30 @@ export async function createMilk({
   return milk;
 }
 
-export async function updateMilk(id: number, newMilk: Milk) {
-  await fetch(`api/milks/${id}`, {
+export async function updateMilk({
+  id,
+  newMilk,
+}: {
+  id: number;
+  newMilk: Milk;
+}) {
+  console.log("updateMilk", id, newMilk);
+  let resp = await fetch(`/api/milks/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newMilk),
   });
+
+  console.log(resp);
+  return resp;
+}
+
+// /api/Milks/ByRating?starRating=3
+export default async function getMilkByRating(rating: number) {
+  const result = await fetch(`/api/Milks/ByRating?starRating=${rating}`, {
+    method: "GET",
+  });
+  return await result.json();
 }

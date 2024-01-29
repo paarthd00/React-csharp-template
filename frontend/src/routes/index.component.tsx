@@ -1,10 +1,10 @@
 import { deleteMilk, Milk } from "@/network";
 import { queryClient } from "@/main";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 
 export const component = function Home() {
   // Make sure to keep the query and mutation before any return statement lol
-
   let { isPending, error, data } = useQuery({
     queryKey: ['milkData'],
     queryFn: () =>
@@ -12,7 +12,7 @@ export const component = function Home() {
         res.json(),
       ),
   })
-  
+
   const deleteMilkMutation = useMutation({
     mutationFn: deleteMilk,
     onSettled: () => queryClient.invalidateQueries({ "queryKey": ["milkData"] })
@@ -37,13 +37,19 @@ export const component = function Home() {
             >
               Delete
             </button>
-            <button
-              onClick={() => {
-                // setView("edit");
+
+            <Link
+              to="/edit"
+              search={{
+                id: milk.id,
+                type: milk.type,
+                rating: milk.rating,
+                createdAt: milk.createdAt,
               }}
-              className="bg-slate-500 text-white px-4 py-2 rounded ">
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
               Edit
-            </button>
+            </Link>
           </div>
         </div>
       ))}

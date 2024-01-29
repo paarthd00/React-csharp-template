@@ -1,7 +1,6 @@
-import React from "react";
-import { MilkContext, SelectedMilkContext } from "@/context/milk-context";
 import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input"
+import { Milk } from "@/network";
 import {
     Form,
     FormControl,
@@ -17,36 +16,59 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
 import * as z from 'zod';
 import { updateMilk } from "@/network";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/main";
+import { useNavigate } from "@tanstack/react-router";
 
-export default function EditForm() {
-    const [, setMilks] = React.useContext(MilkContext);
-    const [selectedMilk, setSelectedMilk] = React.useContext(SelectedMilkContext);
+export default function EditForm({
+    milkId,
+    milkType,
+    milkRating,
+    createdAt
+}:
+    {
+        milkId: number,
+        milkType: string,
+        milkRating: number
+        createdAt: string
+    }) {
+    const Navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            type: selectedMilk?.type,
-            rating: selectedMilk?.rating,
+            type: milkType,
+            rating: milkRating,
         },
     })
+
+    const editMilkMutation = useMutation({
+        mutationFn: updateMilk,
+        onSettled: () => queryClient.invalidateQueries({ "queryKey": ["milkData"] })
+    });
 
     const handleEditMilk = async (values: z.infer<typeof formSchema>) => {
         const { type, rating } = values;
 
-        if (!type || !rating || !selectedMilk) {
+        if (!type || !rating || !milkId) {
             alert("Please fill out all fields")
             return
         }
 
-        let newMilk = selectedMilk; newMilk.type = type; newMilk.rating = rating;
+        let newMilk: Milk = {
+            id: milkId,
+            type: "",
+            rating: 0,
+            createdAt: createdAt
+        }; newMilk.type = type; newMilk.rating = rating;
 
         try {
-            await updateMilk(selectedMilk?.id, newMilk);
-            setMilks((milks) => milks.map((milk) => (milk.id === selectedMilk?.id ? newMilk : milk)));
-            setSelectedMilk(null);
+            await editMilkMutation.mutateAsync({ "id": milkId, newMilk });
         } catch (error) {
             alert("Error editing milk");
             console.log(error);
+        } finally {
+            Navigate({ to: "/" })
         }
     }
 
@@ -81,7 +103,6 @@ export default function EditForm() {
                                     {...field}
                                     onChange={(e) => {
                                         const value = e.target.value;
-                                        // Parse the input value as a number
                                         field.onChange(value !== '' ? Number(value) : undefined);
                                     }}
                                 />

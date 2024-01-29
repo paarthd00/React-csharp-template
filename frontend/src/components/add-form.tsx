@@ -20,7 +20,7 @@ import * as z from 'zod';
 import { createMilk } from "@/network";
 
 export default function AddForm() {
-  
+
   const Navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,7 +39,7 @@ export default function AddForm() {
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     const { type, rating } = values;
     try {
-      addMilkMutation.mutate({type, rating});
+      addMilkMutation.mutate({ type, rating });
     } catch (error) {
       alert("Error creating milk");
     } finally {
@@ -74,6 +74,8 @@ export default function AddForm() {
               <FormLabel>Rating</FormLabel>
               <FormControl>
                 <Input
+                  min={0}
+                  max={5}
                   type="number"
                   placeholder="Enter rating (0-5)"
                   {...field}

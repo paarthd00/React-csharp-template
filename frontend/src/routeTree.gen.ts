@@ -8,28 +8,28 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
-const EditmilkComponentImport = createFileRoute('/editmilk')()
-const AddmilkComponentImport = createFileRoute('/addmilk')()
+const EditComponentImport = createFileRoute('/edit')()
+const AddComponentImport = createFileRoute('/add')()
 const IndexComponentImport = createFileRoute('/')()
 
 // Create/Update Routes
 
-const EditmilkComponentRoute = EditmilkComponentImport.update({
-  path: '/editmilk',
+const EditComponentRoute = EditComponentImport.update({
+  path: '/edit',
   getParentRoute: () => rootRoute,
 } as any).update({
   component: lazyRouteComponent(
-    () => import('./routes/editmilk.component'),
+    () => import('./routes/edit.component'),
     'component',
   ),
 })
 
-const AddmilkComponentRoute = AddmilkComponentImport.update({
-  path: '/addmilk',
+const AddComponentRoute = AddComponentImport.update({
+  path: '/add',
   getParentRoute: () => rootRoute,
 } as any).update({
   component: lazyRouteComponent(
-    () => import('./routes/addmilk.component'),
+    () => import('./routes/add.component'),
     'component',
   ),
 })
@@ -52,12 +52,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexComponentImport
       parentRoute: typeof rootRoute
     }
-    '/addmilk': {
-      preLoaderRoute: typeof AddmilkComponentImport
+    '/add': {
+      preLoaderRoute: typeof AddComponentImport
       parentRoute: typeof rootRoute
     }
-    '/editmilk': {
-      preLoaderRoute: typeof EditmilkComponentImport
+    '/edit': {
+      preLoaderRoute: typeof EditComponentImport
       parentRoute: typeof rootRoute
     }
   }
@@ -67,6 +67,6 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexComponentRoute,
-  AddmilkComponentRoute,
-  EditmilkComponentRoute,
+  AddComponentRoute,
+  EditComponentRoute,
 ])
